@@ -82,40 +82,27 @@ contributions welcome.
 %endif
 
 %prep
-%autosetup -c
-%if %{with python3}
-cp -a %{name}-%{version} python3
-%else
-cp -a %{name}-%{version} python2
-%endif
+{{{ git_dir_setup_macro }}}
 
 %build
 rm -rf $RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
 
 %if %{with python3}
-pushd python3
 # Remove CFLAGS=... for noarch packages (unneeded)
 CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
-popd
 %else
-pushd python2
 # Remove CFLAGS=... for noarch packages (unneeded)
 CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
-popd
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with python3}
-pushd python3
 %{__python3} setup.py install -O1 --root $RPM_BUILD_ROOT/
-popd
 %else
-pushd python2
 %{__python} setup.py install -O1 --root $RPM_BUILD_ROOT/
-popd
 %endif
 
 %files
